@@ -26,7 +26,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // GenesisState defines the checkers module's genesis state.
 type GenesisState struct {
 	Params         Params       `protobuf:"bytes,1,opt,name=params,proto3" json:"params"`
-	SystemInfo     *SystemInfo  `protobuf:"bytes,2,opt,name=systemInfo,proto3" json:"systemInfo,omitempty"`
+	SystemInfo     SystemInfo  `protobuf:"bytes,2,opt,name=systemInfo,proto3" json:"systemInfo,omitempty"`
 	StoredGameList []StoredGame `protobuf:"bytes,3,rep,name=storedGameList,proto3" json:"storedGameList"`
 }
 
@@ -70,11 +70,11 @@ func (m *GenesisState) GetParams() Params {
 	return Params{}
 }
 
-func (m *GenesisState) GetSystemInfo() *SystemInfo {
+func (m *GenesisState) GetSystemInfo() SystemInfo {
 	if m != nil {
 		return m.SystemInfo
 	}
-	return nil
+    return SystemInfo{}
 }
 
 func (m *GenesisState) GetStoredGameList() []StoredGame {
@@ -145,18 +145,18 @@ func (m *GenesisState) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x1a
 		}
 	}
-	if m.SystemInfo != nil {
-		{
-			size, err := m.SystemInfo.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintGenesis(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
-	}
+
+    {
+        size, err := m.SystemInfo.MarshalToSizedBuffer(dAtA[:i])
+        if err != nil {
+            return 0, err
+        }
+        i -= size
+        i = encodeVarintGenesis(dAtA, i, uint64(size))
+    }
+    i--
+    dAtA[i] = 0x12
+
 	{
 		size, err := m.Params.MarshalToSizedBuffer(dAtA[:i])
 		if err != nil {
@@ -189,10 +189,8 @@ func (m *GenesisState) Size() (n int) {
 	_ = l
 	l = m.Params.Size()
 	n += 1 + l + sovGenesis(uint64(l))
-	if m.SystemInfo != nil {
-		l = m.SystemInfo.Size()
-		n += 1 + l + sovGenesis(uint64(l))
-	}
+    l = m.SystemInfo.Size()
+    n += 1 + l + sovGenesis(uint64(l))
 	if len(m.StoredGameList) > 0 {
 		for _, e := range m.StoredGameList {
 			l = e.Size()
@@ -299,9 +297,8 @@ func (m *GenesisState) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.SystemInfo == nil {
-				m.SystemInfo = &SystemInfo{}
-			}
+
+		    m.SystemInfo = SystemInfo{}
 			if err := m.SystemInfo.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
